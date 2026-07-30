@@ -184,6 +184,20 @@ export default function App() {
     () => new Set(autoPreview.map(({id}) => id)),
     [autoPreview],
   );
+  const timeSources = useMemo(() => {
+    if (!catalog) return [];
+    const sourceIds = new Set(
+      catalog.cicadas
+        .filter(({callingWindows}) => callingWindows.length > 0)
+        .flatMap(({sourceIds: ids}) => ids),
+    );
+    return [...sourceIds]
+      .flatMap((id) => {
+        const source = catalog.sources[id];
+        return source ? [{id, ...source}] : [];
+      })
+      .sort((left, right) => left.title.localeCompare(right.title, "zh-CN"));
+  }, [catalog]);
   const customTimeValid =
     periodId !== "custom" || parseClock(customTime) !== null;
 
@@ -645,7 +659,36 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="player-bar">
+      <footer
+        className="research-footer"
+        aria-labelledby="research-sources-title"
+      >
+        <div className="research-footer-inner">
+          <div className="research-footer-copy">
+            <p className="step-label">资料与依据</p>
+            <h2 id="research-sources-title">蝉鸣时段信息来源</h2>
+            <p>
+              活动月份与鸣叫时段来自以下资料。实际活动仍会受到地点、
+              天气、温度与个体差异影响。
+            </p>
+          </div>
+          <nav className="research-source-links" aria-label="蝉鸣时段资料来源">
+            {timeSources.map((source) => (
+              <a
+                key={source.id}
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span>{source.title}</span>
+                <small>查阅来源 ↗</small>
+              </a>
+            ))}
+          </nav>
+        </div>
+      </footer>
+
+      <div className="player-bar">
         <div className="player-inner">
           <div
             className={`playback-status ${status.kind}`}
@@ -684,7 +727,7 @@ export default function App() {
             </button>
           </div>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

@@ -92,3 +92,30 @@ test("catalog and media endpoint are available in the browser session", async ({
   expect(mediaResponse.status()).toBe(206);
   expect((await mediaResponse.body()).byteLength).toBe(100);
 });
+
+test("page footer lists referenced calling-period sources", async ({
+  page,
+  request,
+}) => {
+  const catalog = await (await request.get("/api/v1/catalog")).json();
+  const expectedIds = new Set<string>(
+    catalog.cicadas
+      .filter((cicada: {callingWindows: string[]}) =>
+        cicada.callingWindows.length > 0)
+      .flatMap((cicada: {sourceIds: string[]}) => cicada.sourceIds),
+  );
+
+  const footer = page.getByRole("contentinfo");
+  await expect(
+    footer.getByRole("heading", {name: "蝉鸣时段信息来源"}),
+  ).toBeVisible();
+  await expect(footer.getByRole("link")).toHaveCount(expectedIds.size);
+  await expect(footer.getByRole("link").first()).toHaveAttribute(
+    "target",
+    "_blank",
+  );
+  await expect(footer.getByRole("link").first()).toHaveAttribute(
+    "rel",
+    "noopener noreferrer",
+  );
+});

@@ -1,4 +1,10 @@
-import {cleanup, fireEvent, render, screen} from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import App from "./App";
 import type {Catalog} from "./types";
@@ -26,7 +32,13 @@ const catalog: Catalog = {
   dayPeriods: [
     {id: "dawn", labelZh: "黎明", windows: ["05:00-07:30"]},
   ],
-  sources: {},
+  sources: {
+    sample_source: {
+      title: "测试鸣叫时段资料",
+      url: "https://example.com/cicada-periods",
+      accessed: "2026-07-30",
+    },
+  },
   cicadas: [
     {
       id: "sample",
@@ -42,7 +54,7 @@ const catalog: Catalog = {
       callingWindows: ["00:01-23:59"],
       evidenceLevel: "high",
       evidenceNote: "测试资料",
-      sourceIds: [],
+      sourceIds: ["sample_source"],
       media: {
         id: "sample",
         url: "/api/v1/media/sample",
@@ -118,5 +130,24 @@ describe("App", () => {
       .toContain('"maxAutoTracks":3');
     expect(window.localStorage.getItem("cicadaMixer.preferences.v1"))
       .toContain('"autoRefreshMinutes":45');
+  });
+
+  it("renders referenced calling-period sources in the page footer", async () => {
+    render(<App />);
+    await screen.findByText("选择蝉鸣");
+
+    const footer = screen.getByRole("contentinfo");
+    const link = within(footer).getByRole("link", {
+      name: /测试鸣叫时段资料/,
+    });
+    expect(
+      screen.getByRole("heading", {name: "蝉鸣时段信息来源"}),
+    ).toBeInTheDocument();
+    expect(link).toHaveAttribute(
+      "href",
+      "https://example.com/cicada-periods",
+    );
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 });

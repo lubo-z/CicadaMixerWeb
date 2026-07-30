@@ -627,6 +627,74 @@ input[type="time"] {
   line-height: 1.4;
 }
 
+.research-footer {
+  width: min(1160px, calc(100% - 40px));
+  margin: 20px auto 0;
+  padding: 34px 36px;
+  border: 1px solid rgba(214, 229, 111, 0.12);
+  border-radius: 22px;
+  color: #f7f5eb;
+  background: var(--forest);
+  box-shadow: var(--shadow);
+}
+
+.research-footer-inner {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.75fr);
+  gap: 40px;
+}
+
+.research-footer-copy h2 {
+  margin: 0;
+  font-family: "Noto Serif SC Variable", serif;
+  font-size: 1.35rem;
+}
+
+.research-footer-copy > p:last-child {
+  margin: 14px 0 0;
+  color: rgba(247, 245, 235, 0.64);
+  font-size: 0.72rem;
+  line-height: 1.75;
+}
+
+.research-source-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.research-source-links a {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid rgba(247, 245, 235, 0.12);
+  border-radius: 10px;
+  color: #f7f5eb;
+  background: rgba(255, 255, 255, 0.035);
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.research-source-links a:hover {
+  border-color: rgba(214, 229, 111, 0.48);
+  background: rgba(214, 229, 111, 0.08);
+}
+
+.research-source-links span {
+  overflow: hidden;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+}
+
+.research-source-links small {
+  color: var(--lime);
+  font-size: 0.56rem;
+}
+
 .player-bar {
   position: fixed;
   z-index: 20;
@@ -820,6 +888,11 @@ input[type="time"] {
   .cicada-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .research-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -874,7 +947,8 @@ input[type="time"] {
   }
 
   .control-panel,
-  .catalog-panel {
+  .catalog-panel,
+  .research-footer {
     padding: 24px 18px;
     border-radius: 18px;
   }
@@ -894,8 +968,13 @@ input[type="time"] {
   }
 
   .auto-controls,
-  .cicada-grid {
+  .cicada-grid,
+  .research-source-links {
     grid-template-columns: 1fr;
+  }
+
+  .research-footer {
+    width: calc(100% - 24px);
   }
 
   .catalog-heading {
