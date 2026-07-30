@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CicadaMixer Web configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "autoMix",
+    "liveRefresh",
+    "seasons",
+    "dayPeriods",
+    "sources",
+    "cicadas"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./config.schema.json"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "autoMix": {
+      "$ref": "#/$defs/autoMix"
+    },
+    "liveRefresh": {
+      "$ref": "#/$defs/liveRefresh"
+    },
+    "seasons": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spring", "summer", "autumn", "winter"],
+      "properties": {
+        "spring": {"$ref": "#/$defs/months"},
+        "summer": {"$ref": "#/$defs/months"},
+        "autumn": {"$ref": "#/$defs/months"},
+        "winter": {"$ref": "#/$defs/months"}
+      }
+    },
+    "dayPeriods": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/dayPeriod"}
+    },
+    "sources": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"$ref": "#/$defs/id"},
+      "additionalProperties": {"$ref": "#/$defs/source"}
+    },
+    "cicadas": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/cicada"}
+    }
+  },
+  "$defs": {
+    "autoMix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultTracks", "minTracks", "maxTracks"],
+      "properties": {
+        "defaultTracks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "minTracks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "maxTracks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        }
+      }
+    },
+    "liveRefresh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "defaultMinutes",
+        "minMinutes",
+        "maxMinutes",
+        "stepMinutes"
+      ],
+      "properties": {
+        "defaultMinutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        },
+        "minMinutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        },
+        "maxMinutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        },
+        "stepMinutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "month": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "months": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/month"}
+    },
+    "optionalMonths": {
+      "type": "array",
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/month"}
+    },
+    "timeWindow": {
+      "type": "string",
+      "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]-(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+    },
+    "timeWindows": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/timeWindow"}
+    },
+    "dayPeriod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "labelZh", "windows"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "labelZh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "windows": {
+          "allOf": [
+            {"$ref": "#/$defs/timeWindows"},
+            {"minItems": 1}
+          ]
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "url", "accessed"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "accessed": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "cicada": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "displayOrder",
+        "enabled",
+        "autoEligible",
+        "autoPriority",
+        "commonNameZh",
+        "scientificName",
+        "mediaFile",
+        "volume",
+        "activeMonths",
+        "peakMonths",
+        "callingWindows",
+        "evidenceLevel",
+        "evidenceNote",
+        "sourceIds"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "displayOrder": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "autoEligible": {
+          "type": "boolean"
+        },
+        "autoPriority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "commonNameZh": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scientificName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mediaFile": {
+          "type": "string",
+          "pattern": "^[^/\\\\]+\\.mp4$"
+        },
+        "volume": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "activeMonths": {"$ref": "#/$defs/optionalMonths"},
+        "peakMonths": {"$ref": "#/$defs/optionalMonths"},
+        "callingWindows": {"$ref": "#/$defs/timeWindows"},
+        "evidenceLevel": {
+          "enum": ["high", "medium", "low", "unknown"]
+        },
+        "evidenceNote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/id"}
+        }
+      }
+    }
+  }
+}
